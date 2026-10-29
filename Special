@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorry Ayesha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: rgba(22, 24, 34, 0.85);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --accent-pink: #ff6b8b;
+      --accent-purple: #a29bfe;
+      --text-main: #f1f2f6;
+      --text-muted: #a4b0be;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow-x: hidden; padding: 20px; }
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+    #confettiCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; pointer-events: none; }
+    .app-container { position: relative; z-index: 1; width: 100%; max-width: 440px; }
+    .card { display: none; background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 24px; padding: 32px 24px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); animation: fadeIn 0.4s ease-out forwards; }
+    .card.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .badge { display: inline-block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-purple); background: rgba(162, 155, 254, 0.12); padding: 6px 14px; border-radius: 20px; margin-bottom: 16px; }
+    .card-icon { font-size: 48px; margin-bottom: 12px; }
+    h2 { font-size: 28px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+    .subtitle { font-size: 15px; color: var(--accent-pink); margin-bottom: 20px; font-weight: 500; }
+    .description { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+    .btn { width: 100%; padding: 14px 20px; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; outline: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent-pink), #e84393); color: #fff; box-shadow: 0 8px 20px rgba(255, 107, 139, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255, 107, 139, 0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-group { display: flex; gap: 12px; }
+    .footer-note { font-size: 12px; color: var(--text-muted); margin-top: 20px; opacity: 0.7; }
+    .punch-area { background: rgba(255, 255, 255, 0.04); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 18px; padding: 24px; margin-bottom: 24px; cursor: pointer; user-select: none; transition: background 0.2s; }
+    .punch-area:hover { background: rgba(255, 255, 255, 0.07); }
+    .pillow { font-size: 60px; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .pillow.hit { transform: scale(0.8) rotate(-10deg); }
+    .punch-counter { font-size: 20px; font-weight: 700; color: var(--accent-pink); margin-top: 10px; }
+    .pillow-caption { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    .promise-container { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 18px; padding: 30px; margin-bottom: 24px; cursor: pointer; }
+    .pinky-icon { font-size: 54px; margin-bottom: 10px; transition: transform 0.3s ease; }
+    .promise-status { font-size: 14px; color: var(--accent-purple); font-weight: 500; }
+    .jar-card { background: rgba(255, 255, 255, 0.05); border-left: 4px solid var(--accent-pink); border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: left; min-height: 90px; display: flex; align-items: center; }
+    .jar-text { font-size: 15px; line-height: 1.6; color: #fff; font-style: italic; }
+    .letter-box { background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: left; box-shadow: inset 0 2px 8px rgba(0,0,0,0.4); }
+    .letter-box p { font-size: 15px; line-height: 1.8; color: #e2e8f0; margin-bottom: 16px; letter-spacing: 0.2px; }
+    .letter-box p:last-child { margin-bottom: 0; color: var(--accent-pink); }
+  </style>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="app-container">
+    
+    <!-- STEP 1 -->
+    <div class="card active" id="step-1">
+      <div class="badge">A quick message from Daniyal</div>
+      <div class="card-icon"><span>🐻</span></div>
+      <h2>Hey Ayesha...</h2>
+      <p class="subtitle">Open this slowly?</p>
+      <div class="description">Daniyal has created a small corner on the screen just to say sorry and clear the air.</div>
+      <button class="btn btn-primary" onclick="nextStep(1, 2)">Okay, I'm listening</button>
+      <div class="footer-note">Crafted with care • Best-friend edition</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card" id="step-2">
+      <div class="badge">Honest & Simple</div>
+      <div class="card-icon"><span>🐱</span></div>
+      <h2>I messed up.</h2>
+      <p class="subtitle">No clever phrasing. No excuses.</p>
+      <div class="description">Maine aapki baat nahi maani aur carelessness mein bol diya. I know I was wrong, and I should have listened to you carefully.</div>
+      <button class="btn btn-primary" onclick="nextStep(2, 3)">There's more</button>
+      <div class="footer-note">Written sincerely • Meant fully</div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card" id="step-3">
+      <div class="badge">If you're still annoyed</div>
+      <h2>Here, hit reset!</h2>
+      <p class="subtitle">Tap as many times as you need to vent out.</p>
+      <div class="punch-area" onclick="punch()">
+        <div class="pillow" id="pillow">🥊</div>
+        <div class="punch-counter" id="punchCount">0 Hits</div>
+        <div class="pillow-caption" id="pillowCaption">Tap to punch the cushion!</div>
+      </div>
+      <button class="btn btn-primary" onclick="nextStep(3, 4)">Okay, feeling lighter</button>
+      <div class="footer-note">Take all your annoyance out!</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="card" id="step-4">
+      <div class="badge">A simple vow</div>
+      <h2>Pinky Promise</h2>
+      <p class="subtitle">Tap the hands to lock the promise.</p>
+      <div class="promise-container" onclick="lockPromise()">
+        <div class="pinky-icon" id="pinkyIcon">🤝</div>
+        <div class="promise-status" id="promiseStatus">Tap to lock the promise</div>
+      </div>
+      <button class="btn btn-primary" id="step4Btn" disabled onclick="nextStep(4, 5)">Locked — Keep Going</button>
+      <div class="footer-note">Binding from this moment onwards</div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="card" id="step-5">
+      <div class="badge">Reach into the jar...</div>
+      <h2>Pull a Promise</h2>
+      <p class="subtitle">Tap below to draw a card.</p>
+      <div class="jar-card">
+        <div class="jar-text" id="jarText">"Agli baar aapki baat pehle sunoonga bina argumentative hue."</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="drawPromise()">Draw Another 🎲</button>
+        <button class="btn btn-primary" onclick="nextStep(5, 6)">Keep It 👍</button>
+      </div>
+      <div class="footer-note">And I mean every single one</div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="card" id="step-6">
+      <div class="badge">A little letter...</div>
+      <h2>Sorry Ayesha</h2>
+      <div class="letter-box">
+        <p>Dear Ayesha,</p>
+        <p>I am really sorry ke maine aapki baat nahi maani. Mujhse galti ho gayi, aur mujhe bilkul aisa nahi karna chahiye tha.</p>
+        <p>Aapki friendship mere liye boht matter karti hai. Aage se main poori koshish karunga ke aapki baat ko hamesha importance doon aur aisi galti na dohraoon.</p>
+        <p>Sincere apology from my side.</p>
+        <p><strong>— Yours, Daniyal</strong></p>
+      </div>
+      <button class="btn btn-primary" onclick="nextStep(6, 7)">Final Step</button>
+      <div class="footer-note">Written slowly, meant fully</div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="card" id="step-7">
+      <div class="badge">Thank you for reading</div>
+      <div class="card-icon"><span>✨</span></div>
+      <h2>Are we good now?</h2>
+      <p class="subtitle">Best friends again?</p>
+      <div class="description">I'll keep showing up as a better and more thoughtful friend every single day.</div>
+      <div class="btn-group" style="margin-top: 25px;">
+        <button class="btn btn-primary" onclick="forgive()">Yes, All Good! 🎉</button>
+        <button class="btn btn-secondary" onclick="restart()">Read It Again 🔄</button>
+      </div>
+      <div class="footer-note">Still best friends 🌟</div>
+    </div>
+
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+      } else if (type === 'punch') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'lock') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+      } else if (type === 'celebrate') {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g); g.connect(audioCtx.destination);
+          o.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+          g.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.08);
+          g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.08 + 0.2);
+          o.start(audioCtx.currentTime + idx * 0.08);
+          o.stop(audioCtx.currentTime + idx * 0.08 + 0.2);
+        });
+      }
+    }
+
+    function nextStep(current, next) {
+      playSound('click');
+      document.getElementById(`step-${current}`).classList.remove('active');
+      document.getElementById(`step-${next}`).classList.add('active');
+    }
+
+    function restart() {
+      playSound('click');
+      document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
+      document.getElementById('step-1').classList.add('active');
+      hits = 0;
+      document.getElementById('punchCount').innerText = '0 Hits';
+      document.getElementById('pillowCaption').innerText = 'Tap to punch the cushion!';
+      isLocked = false;
+      document.getElementById('pinkyIcon').innerText = '🤝';
+      document.getElementById('promiseStatus').innerText = 'Tap to lock the promise';
+      document.getElementById('step4Btn').disabled = true;
+    }
+
+    let hits = 0;
+    const captions = ["Ouch! That hurt!", "Keep going, vent it out!", "Still annoyed? Punch again!", "Getting lighter now?", "Okay, okay! Message received!"];
+    function punch() {
+      hits++;
+      playSound('punch');
+      const pillow = document.getElementById('pillow');
+      const count = document.getElementById('punchCount');
+      const caption = document.getElementById('pillowCaption');
+      pillow.classList.add('hit');
+      setTimeout(() => pillow.classList.remove('hit'), 100);
+      count.innerText = `${hits} ${hits === 1 ? 'Hit' : 'Hits'}`;
+      caption.innerText = captions[Math.min(Math.floor(hits / 3), captions.length - 1)];
+    }
+
+    let isLocked = false;
+    function lockPromise() {
+      if (isLocked) return;
+      isLocked = true;
+      playSound('lock');
+      document.getElementById('pinkyIcon').innerText = '🔒';
+      document.getElementById('pinkyIcon').style.transform = 'scale(1.2)';
+      document.getElementById('promiseStatus').innerText = 'Promise Locked Forever!';
+      document.getElementById('promiseStatus').style.color = '#ff6b8b';
+      document.getElementById('step4Btn').disabled = false;
+    }
+
+    const promises = [
+      "\"Agli baar aapki baat pehle sunoonga bina argumentative hue.\"",
+      "\"Jab bhi aap naraz hogi, main bina gusse ke shaanti se baat karunga.\"",
+      "\"Aapki kisi baat ko ignore nahi karunga.\"",
+      "\"Treat / Treat coffee anytime you ask for it!\""
+    ];
+    let currentPromiseIndex = 0;
+    function drawPromise() {
+      playSound('click');
+      currentPromiseIndex = (currentPromiseIndex + 1) % promises.length;
+      document.getElementById('jarText').innerText = promises[currentPromiseIndex];
+    }
+
+    function forgive() {
+      playSound('celebrate');
+      startConfetti();
+      alert("Yay! Thank you Ayesha! Best friends forever! 🥳✨");
+    }
+
+    const bgCanvas = document.getElementById('bgCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let stars = [];
+    function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+    for (let i = 0; i < 40; i++) {
+      stars.push({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 1.5 + 0.5, alpha: Math.random(), speed: Math.random() * 0.01 + 0.005 });
+    }
+    function animateBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      stars.forEach(star => {
+        star.alpha += star.speed;
+        if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+        bgCtx.beginPath();
+        bgCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+        bgCtx.fill();
+      });
+      requestAnimationFrame(animateBg);
+    }
+    animateBg();
+
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const cCtx = confettiCanvas.getContext('2d');
+    let particles = [];
+    function resizeConfetti() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeConfetti);
+    resizeConfetti();
+    function startConfetti() {
+      particles = [];
+      const colors = ['#ff6b8b', '#a29bfe', '#ffeaa7', '#55efc4', '#74b9ff'];
+      for (let i = 0; i < 100; i++) {
+        particles.push({ x: confettiCanvas.width / 2, y: confettiCanvas.height / 2, vx: (Math.random() - 0.5) * 12, vy: (Math.random() - 0.5) * 12 - 4, color: colors[Math.floor(Math.random() * colors.length)], size: Math.random() * 8 + 4, life: 100 });
+      }
+      animateConfetti();
+    }
+    function animateConfetti() {
+      cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      let active = false;
+      particles.forEach(p => {
+        if (p.life > 0) {
+          active = true;
+          p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life--;
+          cCtx.fillStyle = p.color; cCtx.fillRect(p.x, p.y, p.size, p.size);
+        }
+      });
+      if (active) requestAnimationFrame(animateConfetti);
+    }
+  </script>
+</body>
+</html>
